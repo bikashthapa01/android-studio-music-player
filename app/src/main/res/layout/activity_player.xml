@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="350dp"
-        android:layout_height="350dp"
+        android:layout_width="290dp"
+        android:layout_height="253dp"
         android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,17 +20,20 @@
         android:id="@+id/songTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
         android:text="TextView"
         android:textColor="@color/design_default_color_primary_dark"
         android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/mSeekBar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.53" />
 
     <SeekBar
         android:id="@+id/mSeekBar"
@@ -38,65 +41,69 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="92dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/playIcon"
         app:layout_constraintEnd_toStartOf="@+id/totalTime"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/curTime"
-        app:layout_constraintTop_toBottomOf="@+id/songTitle" />
-
-    <Button
-        android:id="@+id/btnPrev"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:text="Prev"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btnPlay"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btnPlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="Play"
-        app:layout_constraintEnd_toStartOf="@+id/btnNext"
-        app:layout_constraintStart_toEndOf="@+id/btnPrev"
-        app:layout_constraintTop_toBottomOf="@+id/mSeekBar" />
-
-    <Button
-        android:id="@+id/btnNext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginRight="24dp"
-        android:text="Next"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btnPlay"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/songTitle"
+        app:layout_constraintVertical_bias="0.59000003" />
 
     <TextView
         android:id="@+id/curTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:text="00:00"
-        app:layout_constraintBaseline_toBaselineOf="@+id/totalTime"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/mSeekBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/mSeekBar" />
 
     <TextView
         android:id="@+id/totalTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="05:00"
+        app:layout_constraintBottom_toBottomOf="@+id/mSeekBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/songTitle" />
+        app:layout_constraintTop_toTopOf="@+id/mSeekBar" />
+
+    <ImageView
+        android:id="@+id/playIcon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_play_arrow_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/nextIcon"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/prevIcon"
+        app:layout_constraintTop_toBottomOf="@+id/mSeekBar" />
+
+    <ImageView
+        android:id="@+id/prevIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:contentDescription="TODO"
+        android:src="@drawable/ic_skip_previous_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/playIcon"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mSeekBar" />
+
+    <ImageView
+        android:id="@+id/nextIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_skip_next_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/playIcon"
+        app:layout_constraintTop_toBottomOf="@+id/mSeekBar" />
 </android.support.constraint.ConstraintLayout>

@@ -9,25 +9,27 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class Player extends AppCompatActivity {
     SeekBar mSeekBar;
-    Button btnPlay;
-    Button btnNext;
-    Button btnPrev;
     TextView songTitle;
     ArrayList<File> allSongs;
-    Thread updateSeekBar;
     static MediaPlayer mMediaPlayer;
     int position;
     TextView curTime;
     TextView totTime;
+    ImageView playIcon;
+    ImageView prevIcon;
+    ImageView nextIcon;
 
 
     @Override
@@ -36,13 +38,35 @@ public class Player extends AppCompatActivity {
         setContentView(R.layout.activity_player);
 
         mSeekBar = findViewById(R.id.mSeekBar);
-        btnNext = findViewById(R.id.btnNext);
-        btnPrev = findViewById(R.id.btnPrev);
-        btnPlay = findViewById(R.id.btnPlay);
         songTitle = findViewById(R.id.songTitle);
         curTime = findViewById(R.id.curTime);
         totTime = findViewById(R.id.totalTime);
 
+        playIcon = findViewById(R.id.playIcon);
+        prevIcon = findViewById(R.id.prevIcon);
+        nextIcon = findViewById(R.id.nextIcon);
+
+
+        playIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                play();
+            }
+        });
+
+        prevIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                prev();
+            }
+        });
+
+        nextIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                next();
+            }
+        });
 
 
 
@@ -56,7 +80,7 @@ public class Player extends AppCompatActivity {
 
         allSongs = (ArrayList) bundle.getParcelableArrayList("songs");
 
-        String sname = allSongs.get(position).getName();
+//        String sname = allSongs.get(position).getName();
         String songName = playerData.getStringExtra("songName");
         songTitle.setText(songName);
 
@@ -64,9 +88,8 @@ public class Player extends AppCompatActivity {
 
         Uri songResourceUri = Uri.parse(allSongs.get(position).toString());
 
-        mMediaPlayer = MediaPlayer.create(getApplicationContext(),songResourceUri);
-//        mMediaPlayer.start();
-//        mSeekBar.setMax(mMediaPlayer.getDuration());
+        mMediaPlayer = MediaPlayer.create(getApplicationContext(), songResourceUri); // create and load mediaplayer with song resources
+
 
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -75,7 +98,15 @@ public class Player extends AppCompatActivity {
                 totTime.setText(totalTime);
                 mSeekBar.setMax(mMediaPlayer.getDuration());
                 mMediaPlayer.start();
+                playIcon.setImageResource(R.drawable.ic_pause_black_24dp);
 
+            }
+        });
+
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                playIcon.setImageResource(R.drawable.ic_play_arrow_black_24dp);
             }
         });
 
@@ -139,6 +170,39 @@ public class Player extends AppCompatActivity {
             curTime.setText(cTime);
         }
     };
+
+
+    private void play() {
+
+        if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
+            mMediaPlayer.start();
+            playIcon.setImageResource(R.drawable.ic_pause_black_24dp);
+        } else {
+            pause();
+        }
+
+    }
+
+    private void pause() {
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.pause();
+            playIcon.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+
+        }
+
+    }
+
+    private void next() {
+        Toast.makeText(this, "Next Btn is Clicked.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void prev() {
+        Toast.makeText(this, "Prev Btn is Clicked.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void setLooping() {
+
+    }
 
 
     public String createTimeLabel(int duration){
