@@ -1,10 +1,14 @@
 package com.example.letsplay;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -31,7 +35,7 @@ public class Player extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
 
-        mSeekBar = findViewById(R.id.seekBar);
+        mSeekBar = findViewById(R.id.mSeekBar);
         btnNext = findViewById(R.id.btnNext);
         btnPrev = findViewById(R.id.btnPrev);
         btnPlay = findViewById(R.id.btnPlay);
@@ -41,27 +45,6 @@ public class Player extends AppCompatActivity {
 
 
 
-        updateSeekBar = new Thread(){
-            @Override
-            public void run() {
-
-                int totalSongDuration = mMediaPlayer.getDuration();
-                int currentSongPosition = 0;
-
-                while(currentSongPosition < totalSongDuration){
-                    try{
-                        sleep(500);
-                        currentSongPosition = mMediaPlayer.getCurrentPosition();
-                        mSeekBar.setProgress(currentSongPosition);
-
-                    }catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-
-            }
-        };
 
         if(mMediaPlayer != null){
             mMediaPlayer.stop();
@@ -121,8 +104,41 @@ public class Player extends AppCompatActivity {
         });
 
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (mMediaPlayer != null) {
+                    try {
+                        Log.i("Thread ", "Thread Called");
+                        // create new message to send to handler
+                        Message msg = new Message();
+                        msg.what = mMediaPlayer.getCurrentPosition();
+                        handler.sendMessage(msg);
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+
+
+
+
 
     }
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Log.i("handler ", "handler called");
+            int current_position = msg.what;
+            mSeekBar.setProgress(current_position);
+            String cTime = createTimeLabel(current_position);
+            curTime.setText(cTime);
+        }
+    };
 
 
     public String createTimeLabel(int duration){
