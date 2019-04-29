@@ -30,6 +30,8 @@ public class Player extends AppCompatActivity {
     ImageView playIcon;
     ImageView prevIcon;
     ImageView nextIcon;
+    Intent playerData;
+    Bundle bundle;
 
 
     @Override
@@ -47,50 +49,66 @@ public class Player extends AppCompatActivity {
         nextIcon = findViewById(R.id.nextIcon);
 
 
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+        }
+
+        playerData = getIntent();
+        bundle = playerData.getExtras();
+
+        allSongs = (ArrayList) bundle.getParcelableArrayList("songs");
+        position = bundle.getInt("position", 0);
+        initPlayer(position);
+
+
         playIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 play();
             }
         });
-
         prevIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                prev();
+
+                if (position <= 0) {
+                    position = allSongs.size() - 1;
+                } else {
+                    position--;
+                }
+
+                initPlayer(position);
+
             }
         });
 
         nextIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                next();
+                if (position < allSongs.size() - 1) {
+                    position++;
+                } else {
+                    position = 0;
+
+                }
+                initPlayer(position);
             }
         });
 
+    }
 
 
-        if(mMediaPlayer != null){
-            mMediaPlayer.stop();
-            mMediaPlayer.release();
+    private void initPlayer(final int position) {
+
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+            mMediaPlayer.reset();
         }
 
-        Intent playerData = getIntent();
-        Bundle bundle = playerData.getExtras();
-
-        allSongs = (ArrayList) bundle.getParcelableArrayList("songs");
-
-//        String sname = allSongs.get(position).getName();
-        String songName = playerData.getStringExtra("songName");
-        songTitle.setText(songName);
-
-        position = bundle.getInt("position",0);
-
+        String sname = allSongs.get(position).getName().replace(".mp3", "").replace(".m4a", "").replace(".wav", "").replace(".m4b", "");
+        songTitle.setText(sname);
         Uri songResourceUri = Uri.parse(allSongs.get(position).toString());
 
         mMediaPlayer = MediaPlayer.create(getApplicationContext(), songResourceUri); // create and load mediaplayer with song resources
-
-
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -106,17 +124,27 @@ public class Player extends AppCompatActivity {
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                playIcon.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+                int curSongPoition = position;
+                // code to repeat songs until the
+                if (curSongPoition < allSongs.size() - 1) {
+                    curSongPoition++;
+                    initPlayer(curSongPoition);
+                } else {
+                    curSongPoition = 0;
+                    initPlayer(curSongPoition);
+                }
+
+                //playIcon.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+
             }
         });
-
 
 
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                if(fromUser){
+                if (fromUser) {
                     mMediaPlayer.seekTo(progress);
                     mSeekBar.setProgress(progress);
                 }
@@ -130,7 +158,7 @@ public class Player extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                
+
             }
         });
 
@@ -140,30 +168,27 @@ public class Player extends AppCompatActivity {
             public void run() {
                 while (mMediaPlayer != null) {
                     try {
-                        Log.i("Thread ", "Thread Called");
+//                        Log.i("Thread ", "Thread Called");
                         // create new message to send to handler
-                        Message msg = new Message();
-                        msg.what = mMediaPlayer.getCurrentPosition();
-                        handler.sendMessage(msg);
-                        Thread.sleep(1000);
+                        if (mMediaPlayer.isPlaying()) {
+                            Message msg = new Message();
+                            msg.what = mMediaPlayer.getCurrentPosition();
+                            handler.sendMessage(msg);
+                            Thread.sleep(1000);
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
             }
         }).start();
-
-
-
-
-
     }
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            Log.i("handler ", "handler called");
+//            Log.i("handler ", "handler called");
             int current_position = msg.what;
             mSeekBar.setProgress(current_position);
             String cTime = createTimeLabel(current_position);
@@ -192,9 +217,6 @@ public class Player extends AppCompatActivity {
 
     }
 
-    private void next() {
-        Toast.makeText(this, "Next Btn is Clicked.", Toast.LENGTH_SHORT).show();
-    }
 
     private void prev() {
         Toast.makeText(this, "Prev Btn is Clicked.", Toast.LENGTH_SHORT).show();
@@ -205,17 +227,16 @@ public class Player extends AppCompatActivity {
     }
 
 
-    public String createTimeLabel(int duration){
+    public String createTimeLabel(int duration) {
         String timeLabel = "";
-        int min = duration/1000/60;
-        int sec = duration/1000%60;
+        int min = duration / 1000 / 60;
+        int sec = duration / 1000 % 60;
 
-        timeLabel += min +":";
-        if(sec < 10 ) timeLabel += "0";
+        timeLabel += min + ":";
+        if (sec < 10) timeLabel += "0";
         timeLabel += sec;
 
         return timeLabel;
-
 
 
     }
