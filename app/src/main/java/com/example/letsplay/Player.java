@@ -32,6 +32,9 @@ public class Player extends AppCompatActivity {
     ImageView nextIcon;
     Intent playerData;
     Bundle bundle;
+    ImageView repeatIcon;
+    ImageView suffleIcon;
+    ImageView curListIcon;
 
 
     @Override
@@ -48,6 +51,10 @@ public class Player extends AppCompatActivity {
         prevIcon = findViewById(R.id.prevIcon);
         nextIcon = findViewById(R.id.nextIcon);
 
+        repeatIcon = findViewById(R.id.repeatIcon);
+        suffleIcon = findViewById(R.id.suffleIcon);
+        curListIcon = findViewById(R.id.curListIcon);
+
 
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
@@ -59,6 +66,16 @@ public class Player extends AppCompatActivity {
         allSongs = (ArrayList) bundle.getParcelableArrayList("songs");
         position = bundle.getInt("position", 0);
         initPlayer(position);
+
+        curListIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent list = new Intent(getApplicationContext(),CurrentList.class);
+                list.putExtra("songsList",allSongs);
+                startActivity(list);
+
+            }
+        });
 
 
         playIcon.setOnClickListener(new View.OnClickListener() {
@@ -218,13 +235,6 @@ public class Player extends AppCompatActivity {
     }
 
 
-    private void prev() {
-        Toast.makeText(this, "Prev Btn is Clicked.", Toast.LENGTH_SHORT).show();
-    }
-
-    private void setLooping() {
-
-    }
 
 
     public String createTimeLabel(int duration) {
